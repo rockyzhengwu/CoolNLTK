@@ -9,7 +9,7 @@
 
 ## 模型训练
 
-### train file
+### 1.train file
 使用和[fastText](https://github.com/facebookresearch/fastText)一样的数据输入
 
 **测试数据可以从fastText的代码中下载然后copy到```./datasets/dbpedia```目录下**
@@ -40,7 +40,7 @@ DATA_OUT_DIR=./datasets/dbpedia/
 MODEL_OUT_DIR=./results/dbpedia/
 ```
 
-### embedding
+### 2.embedding
 生成word2vec的训练数据
 ```./main.sh pre```
 
@@ -49,7 +49,7 @@ MODEL_OUT_DIR=./results/dbpedia/
 ./main.sh vec
 ```
 
-### map file
+### 3.map file
 
 这一步产生需要的映射文件
 
@@ -57,7 +57,7 @@ MODEL_OUT_DIR=./results/dbpedia/
 ./main.sh map
 ```
 
-### tfrecord
+### 4.tfrecord
 
 产生tfrecord 文件
 
@@ -65,7 +65,7 @@ MODEL_OUT_DIR=./results/dbpedia/
 ./main.sh data
 ```
 
-### train
+### 5.train
 模型训练
 ```
 ./main.sh train
