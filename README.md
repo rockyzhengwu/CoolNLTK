@@ -5,7 +5,7 @@
 ## 已实现模型
 1. [TextCNN](https://arxiv.org/abs/1408.5882)
 2. [TextRNN](https://www.ijcai.org/Proceedings/16/Papers/408.pdf)
-3. ~~[CLstm](https://arxiv.org/abs/1602.06291)~~
+3. [CLstm](https://arxiv.org/abs/1602.06291)
 
 ## 模型训练
 
@@ -73,9 +73,10 @@ MODEL_OUT_DIR=./results/dbpedia/
 
 
 ## todo
-* 模型导出
+* 模型导出, 模型条用代码
 * 其他文本分类模型实现
 * 根据最新的tensorflow重构代码
-
+* 修改tfrecord 文件的格式，产生多分而不是一份
+* 添加tensorboard　
 
 

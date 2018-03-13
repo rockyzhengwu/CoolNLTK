@@ -6,7 +6,7 @@ from tensorflow.contrib import rnn
 
 class CLSTM(object):
 
-    def __init__(self, config):
+    def __init__(self, config, embed):
         self.embedding_dim = config["embedding_dim"]
         self.sequence_length = config["sequence_length"]
         self.num_hidden = config["num_hidden"]
@@ -20,12 +20,14 @@ class CLSTM(object):
         self.decay_rate = config["decay_rate"]
 
         # conv configuration
-        self.filter_size = config["filter_size"]
-        self.pool_size = config["pool_size"]
-        self.num_filters = config["num_filters"]
+        self.filter_size = config["cnn_filter_size"]
+        self.pool_size = config["cnn_pool_size"]
+        self.num_filters = config["cnn_num_filter"]
 
-        self.input_x = tf.placeholder(dtype = tf.int32, shape = [None, self.sequence_length], name = "input_x")
-        self.input_y = tf.placeholder(dtype = tf.int32, shape = [None, self.num_classes], name = "input_y")
+        self.input_x = tf.placeholder(dtype = tf.int32, shape = [None, None], name = "input_x")
+        self.input_y = tf.placeholder(dtype = tf.int32, shape = [None, None], name = "input_y")
+
+        # todo add dropout
         self.dropout_keep_prob = tf.placeholder(tf.float32, name = "dropout_keep_prob")
 
 
@@ -34,6 +36,7 @@ class CLSTM(object):
 
         self.epoch_increment = tf.assign(self.epoch_step, tf.add(self.epoch_step, tf.constant(1)))
 
+        self.embedding = tf.get_variable(name="char_embeding", initializer=embed)
 
         self.initializer = tf.random_normal_initializer(stddev = 0.1)
 
@@ -49,9 +52,6 @@ class CLSTM(object):
 
 
     def init_weight(self):
-         self.embedding = tf.get_variable(name = "embedding",
-                                          shape = [self.vocab_sizes, self.embedding_dim],
-                                          initializer = self.initializer)
 
          self.w_projection = tf.get_variable(name = "w_projection",
                                              shape = [self.num_hidden, self.num_classes],
@@ -91,7 +91,8 @@ class CLSTM(object):
         outputs, _ = tf.nn.dynamic_rnn(lstm_fw_cell, pooled, dtype = tf.float32)
 
         output_rnn = tf.concat(outputs, axis = 2)
-        self.output_rnn_last = tf.reduce_mean(output_rnn, axis = 1)
+        dropout_rnn = tf.nn.dropout(output_rnn, keep_prob=self.dropout_keep_prob)
+        self.output_rnn_last = tf.reduce_mean(dropout_rnn, axis = 1)
 
         with tf.name_scope("output"):
             self.logits = tf.nn.xw_plus_b(self.output_rnn_last, self.w_projection, self.b_projection, name = "logits")

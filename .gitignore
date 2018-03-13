@@ -103,3 +103,4 @@ ENV/
 .idea/
 train/datasets/
 results
+data/

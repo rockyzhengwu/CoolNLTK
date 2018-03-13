@@ -17,6 +17,7 @@ from data_utils import load_size_file
 from data_utils import load_vocab
 from data_utils import SegBatcher
 import word2vec
+import os
 
 
 def init_config(vocab_size, num_class):
@@ -42,12 +43,18 @@ def init_config(vocab_size, num_class):
     config["optimizer"] = FLAGS.optimizer
     config["initializer"] = None
     config["sequence_length"] = FLAGS.sequence_length
-
     config['num_hidden'] = FLAGS.num_hidden
+
+    # clstm
+    config['cnn_filter_size'] = FLAGS.cnn_filter_size
+    config['cnn_num_filter'] = FLAGS.cnn_num_filter
+    config['cnn_pool_size'] = FLAGS.cnn_pool_size
+
     return config
 
 
 def get_model():
+
     model_type = FLAGS.model
     if model_type == "cnn":
         model_class = TextCNN
@@ -163,14 +170,14 @@ def main(argv):
                     if step % FLAGS.eval_step == 0:
                         # todo evaliate
                         acc = run_eval(test_batches)
+
                         if acc< best_acc:
                             # todo finish
                             pass
                         else:
                             best_acc = acc
-                            sv.saver.save(sess, FLAGS.out_dir)
-                        print("{}: test{:g} best acc :".format(time_str, acc, best_acc))
-
+                            sv.saver.save(sess, os.path.join(FLAGS.out_dir, "model"), global_step=step,)
+                        print("{}: test{:g} best acc :{}".format(time_str, acc, best_acc))
                     time_str = datetime.datetime.now().isoformat()
                     print("{}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
 
@@ -211,18 +218,20 @@ if __name__ == '__main__':
     # text cnn
     ##############################################
 
-    tf.app.flags.DEFINE_string("filters", "3,5,7", "filter sizes")
-    tf.app.flags.DEFINE_integer("num_filters", 128, "num of filter")
+    tf.app.flags.DEFINE_string("filters", "3,5,7", "filter sizes for text_cnn")
+    tf.app.flags.DEFINE_integer("num_filters", 128, "num of filter for text_cnn")
     ##############################################
     #bilstm
     ##############################################
-    tf.app.flags.DEFINE_integer("num_hidden", 256, "num of hidden")
+    tf.app.flags.DEFINE_integer("num_hidden", 256, "num of hidden for text_rnn")
 
     #############################################
     #clstm
     #############################################
-    # tf.app.flags.DEFINE_integer("cfilter", 5, "CNN filter size for clstm")
-    # tf.app.flags.DEFINE_integer("cnum_filter", 256, "num filter for clstm")
+    tf.app.flags.DEFINE_integer("cnn_filter_size", 3, "CNN filter size for clstm")
+    tf.app.flags.DEFINE_integer("cnn_num_filter", 256, "num filter for clstm")
+    tf.app.flags.DEFINE_integer("cnn_pool_size", 2,  "pool size for clstm")
+
 
     FLAGS = tf.flags.FLAGS
     tf.app.run()
