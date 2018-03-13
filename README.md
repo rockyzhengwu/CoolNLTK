@@ -94,7 +94,6 @@ TextRNN、TextCNN,CLstm 模型能共用这个模块
 
 
 ## todo
-* 模型导出, 模型条用代码
 * 根据最新的tensorflow重构代码
 * 修改tfrecord 文件的格式，产生多分而不是一份
 * 添加tensorboard　
