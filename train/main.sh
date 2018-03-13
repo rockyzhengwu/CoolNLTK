@@ -14,7 +14,7 @@ EMBEDDING_SIZE=100
 
 MAX_LENGTH=100
 
-MODEL=clstm
+MODEL=cnn
 
 ############################################################
 VEC_PATH="$DATA_OUT_DIR"/vec

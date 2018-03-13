@@ -15,9 +15,11 @@ def load_vocab(vocab_path):
     return vocab
 
 
-def list_to_array(data_list, dtype=np.int32):
-    array = np.array(data_list, dtype).reshape(1, len(data_list))
-    return array
+
+def load_size(size_file):
+    f = open(size_file)
+    size_map = json.loads(f.read())
+    return size_map
 
 
 def load_graph(path):
@@ -28,11 +30,19 @@ def load_graph(path):
         tf.import_graph_def(graph_def, name="prefix")
     return graph
 
+def list_to_array(data_list, dtype=np.int32):
+    array = np.array(data_list, dtype).reshape(1, len(data_list))
+    return array
+
 
 class Predictor(object):
-    def __init__(self, model_file, char_to_id, id_to_tag):
+    # cnn  fix_length 需要需要等于True
+
+
+    def __init__(self, model_file, char_to_id, fix_length=False):
         self.char_to_id = char_to_id
-        self.id_to_tag = {int(k): v for k, v in id_to_tag.items()}
+        self.fix_length  = fix_length
+
         self.graph = load_graph(model_file)
 
         self.input_x = self.graph.get_operation_by_name("prefix/input_x").outputs[0]
@@ -41,10 +51,23 @@ class Predictor(object):
         self.scores = self.graph.get_operation_by_name("prefix/output/predprob").outputs[0]
         self.sess = tf.Session(graph=self.graph)
         self.sess.as_default()
-        self.num_class = len(self.id_to_tag)
+
 
     def predict(self, words):
-        inputx = np.array([[vocab.get(w, vocab.get("<OOV>")) for w in words]])
+
+        inputx = [[vocab.get(w, vocab.get("<OOV>")) for w in words]]
+        if self.fix_length:
+            # cnn padding
+            new_inputx = []
+            for x in inputx:
+                if len(x)>100:
+                    x = x[100]
+                else:
+                    x = x + [0]*(100 - len(x))
+                new_inputx.append(x)
+            inputx = np.array(new_inputx)
+        else:
+            inputx = np.array(inputx)
         feed_dict = {
             self.input_x: inputx,
             self.dropout_keep_prob: 1.0,
@@ -56,12 +79,16 @@ class Predictor(object):
 
 
 if __name__ == '__main__':
-    model_file = "/home/wuzheng/GitHub/CoolNLTK/train/results/dbpedia/clstm/modle.pb"
-    vocab_path = "/home/wuzheng/GitHub/CoolNLTK/train/datasets/dbpedia/vocab.json"
-    vocab = load_vocab(vocab_path)
-    id_to_tag = {v: k for k, v in vocab.items()}
-    predictor = Predictor(model_file=model_file, char_to_id=vocab, id_to_tag=id_to_tag)
+    #######
+    # cnn,clstm 是一定要固定句子长度的，bilstm可以随意, 但不能为空
+    #####
 
+    model_file = "./results/dbpedia/bilstm/modle.pb"
+    vocab_path = "./datasets/dbpedia/vocab.json"
+    map_file = "./datasets/dbpedia/size.json"
+    vocab = load_vocab(vocab_path)
+    predictor = Predictor(model_file=model_file, char_to_id=vocab, fix_length=False)
     text = "palaquium canaliculatum , palaquium canaliculatum is a species of plant in the sapotaceae family . it is endemic to sri lanka"
+    text = "Șipotu river ( râul mare ) , the Șipotu river is a tributary of the râul mare in romania"
     words = text.split()
     predictor.predict(words)

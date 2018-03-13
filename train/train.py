@@ -56,6 +56,7 @@ def init_config(vocab_size, num_class):
 def get_model():
 
     model_type = FLAGS.model
+    print("start traing model : %s"%(FLAGS.model))
     if model_type == "cnn":
         model_class = TextCNN
     elif model_type == "bilstm":
@@ -172,15 +173,20 @@ def main(argv):
                         acc = run_eval(test_batches)
 
                         if acc< best_acc:
+                            sv.saver.save(sess, os.path.join(FLAGS.out_dir, "model"), global_step=step)
                             # todo finish
-                            pass
+                            print("eary stoped .....")
+                            sv.stop()
+                            break
                         else:
                             best_acc = acc
                             sv.saver.save(sess, os.path.join(FLAGS.out_dir, "model"), global_step=step,)
                         print("{}: test{:g} best acc :{}".format(time_str, acc, best_acc))
                     time_str = datetime.datetime.now().isoformat()
                     print("{}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
-
+        sv.coord.request_stop()
+        sv.coord.join(threads)
+        sess.close()
 
 
 if __name__ == '__main__':

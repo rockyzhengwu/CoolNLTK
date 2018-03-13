@@ -18,8 +18,8 @@ class TextRNN(object):
         self.decay_steps = config["decay_steps"]
         self.decay_rate = config["decay_rate"]
 
-        self.input_x = tf.placeholder(dtype = tf.int32, shape = [None, self.sequence_length], name = "input_x")
-        self.input_y = tf.placeholder(dtype = tf.int32, shape = [None, self.num_classes], name = "input_y")
+        self.input_x = tf.placeholder(dtype = tf.int32, shape = [None, None], name = "input_x")
+        self.input_y = tf.placeholder(dtype = tf.int32, shape = [None, None], name = "input_y")
         self.dropout_keep_prob = tf.placeholder(tf.float32, name = "dropout_keep_prob")
 
 
@@ -59,7 +59,9 @@ class TextRNN(object):
         outputs, _ = tf.nn.bidirectional_dynamic_rnn(lstm_fw_cell, lstm_bw_cell, self.embedded_words, dtype = tf.float32)
 
         output_rnn = tf.concat(outputs, axis = 2)
-        self.output_rnn_last = tf.reduce_mean(output_rnn, axis = 1)
+
+        dropout_rnn = tf.nn.dropout(output_rnn, keep_prob=self.dropout_keep_prob)
+        self.output_rnn_last = tf.reduce_mean(dropout_rnn, axis = 1)
 
         with tf.name_scope("output"):
             self.logits = tf.nn.xw_plus_b(self.output_rnn_last, self.w_projection, self.b_projection, name = "logits")
