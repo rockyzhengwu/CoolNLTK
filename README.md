@@ -31,7 +31,7 @@ __label__6 , mv eilean bhearnaraigh
 TRAIN_FILE=./datasets/dbpedia/dbpedia.train
 TEST_FILE=./datasets/dbpedia/dbpedia.test
 
-# 使用的模型
+# 使用的模型 可选cnn, bilstm, clstm
 MODEL=cnn
 
 # 中间文件输出路径
@@ -44,10 +44,12 @@ MODEL_OUT_DIR=./results/dbpedia/
 
 ### 2.embedding
 生成word2vec的训练数据
-```./main.sh pre```
+```bash
+./main.sh pre
+```
 
 训练词向量
-```
+```bash
 ./main.sh vec
 ```
 
@@ -55,7 +57,7 @@ MODEL_OUT_DIR=./results/dbpedia/
 
 这一步产生需要的映射文件
 
-```
+```bash
 ./main.sh map
 ```
 
@@ -63,15 +65,27 @@ MODEL_OUT_DIR=./results/dbpedia/
 
 产生tfrecord 文件
 
-```
+```bash
 ./main.sh data
 ```
 
 ### 5.train
 模型训练
-```
+```bash
 ./main.sh train
 ```
+
+### 6.模型导出
+导出成pb文件，可用Java，Go语言读取
+
+```bash
+./main export
+```
+
+### 模型使用
+在```predict.py```中有例子，读取上面训练好导出的模型，和产生的```vocab.json```文件
+
+TextRNN、TextCNN,CLstm 模型能共用这个模块
 
 
 ## todo
