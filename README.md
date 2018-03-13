@@ -14,6 +14,8 @@
 
 **测试数据可以从fastText的代码中下载然后copy到```./datasets/dbpedia```目录下**
 
+**特别注意：类别标签是从１开始的，因为在后面训练的时候需要做pad 0 的操作,为了避免混淆。**
+
 一个例子如下:
 ```
 __label__7 , joseph purdy homestead
