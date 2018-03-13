@@ -90,9 +90,12 @@ TextRNN、TextCNN,CLstm 模型能共用这个模块
 
 ## todo
 * 模型导出, 模型条用代码
-* 其他文本分类模型实现
 * 根据最新的tensorflow重构代码
 * 修改tfrecord 文件的格式，产生多分而不是一份
 * 添加tensorboard　
 
-
+待实现文本分类模型实现
+ 1. [HAM](https://www.cs.cmu.edu/~diyiy/docs/naacl16.pdf)
+ 2. [RCNN](https://scholar.google.com.hk/scholar?q=Recurrent+Convolutional+Neural+Networks+for+Text+Classification&hl=zh-CN&as_sdt=0&as_vis=1&oi=scholart&sa=X&ved=0ahUKEwjpx82cvqTUAhWHspQKHUbDBDYQgQMIITAA)
+ 3. Recurrent Entity Network
+ 3. Dynamic Memory Network
