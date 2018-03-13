@@ -2,6 +2,11 @@
 
 文本分类工具集
 
+## 特点
+   1. 多模型,相对统一的数据输入,方便效果对比
+   2. 可直接用于生产
+   3. 使用相对简单
+
 ## 已实现模型
 1. [TextCNN](https://arxiv.org/abs/1408.5882)
 2. [TextRNN](https://www.ijcai.org/Proceedings/16/Papers/408.pdf)
@@ -94,7 +99,7 @@ TextRNN、TextCNN,CLstm 模型能共用这个模块
 * 修改tfrecord 文件的格式，产生多分而不是一份
 * 添加tensorboard　
 
-待实现文本分类模型实现
+计划实现更多模型，包括但不限于下面这些
  1. [HAM](https://www.cs.cmu.edu/~diyiy/docs/naacl16.pdf)
  2. [RCNN](https://scholar.google.com.hk/scholar?q=Recurrent+Convolutional+Neural+Networks+for+Text+Classification&hl=zh-CN&as_sdt=0&as_vis=1&oi=scholart&sa=X&ved=0ahUKEwjpx82cvqTUAhWHspQKHUbDBDYQgQMIITAA)
  3. Recurrent Entity Network
